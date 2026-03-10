@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Inventory Control & Stock Tracking System</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f2f2f2;
+}
+
+nav{
+    background:#2c3e50;
+    padding:15px;
+    text-align:center;
+}
+
+nav a{
+    color:white;
+    margin:15px;
+    text-decoration:none;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+nav a:hover{
+    color:#00ffff;
+}
+
+.page{
+    display:none;
+    padding:30px;
+    text-align:center;
+}
+
+.active{
+    display:block;
+}
+
+.product{
+    background:white;
+    width:220px;
+    padding:10px;
+    margin:15px;
+    display:inline-block;
+    box-shadow:0 0 10px gray;
+    border-radius:10px;
+}
+
+.product img{
+    width:200px;
+    height:150px;
+    border-radius:8px;
+}
+
+button{
+    padding:8px 15px;
+    background:#00bcd4;
+    border:none;
+    color:white;
+    cursor:pointer;
+    border-radius:5px;
+}
+
+button:hover{
+    background:#008c9e;
+}
+
+input{
+    padding:8px;
+    margin:8px;
+    width:80%;
+}
+
+.box{
+    background:white;
+    width:320px;
+    margin:auto;
+    padding:20px;
+    box-shadow:0 0 10px gray;
+    border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<a onclick="openPage('home')">Home</a>
+<a onclick="openPage('login')">Login</a>
+<a onclick="openPage('catalog')">Catalog</a>
+<a onclick="openPage('about')">About</a>
+<a onclick="openPage('cart')">Cart</a>
+</nav>
+
+<div id="home" class="page active">
+<h1>Welcome to Inventory Control & Stock Tracking System</h1>
+<p>Manage products and track stock easily.</p>
+</div>
+
+<div id="catalog" class="page">
+<h1>Product Catalog</h1>
+<div id="productContainer"></div>
+</div>
+
+<div id="cart" class="page">
+<h1>Shopping Cart</h1>
+<ul id="cartList"></ul>
+<h3 id="total"></h3>
+</div>
+
+<div id="about" class="page">
+<h1>About</h1>
+<p>This system helps manage relational inventory and track stock efficiently.</p>
+</div>
+
+<div id="login" class="page">
+<div class="box">
+<h2>Login</h2>
+<input type="text" id="username" placeholder="Username"><br>
+<input type="password" id="password" placeholder="Password"><br>
+<button onclick="login()">Login</button>
+<p id="error" style="color:red;"></p>
+</div>
+</div>
+
+<div id="mainModule" class="page">
+<h1>Admin Dashboard</h1>
+
+<div class="box">
+<h3>Add / Update Product</h3>
+<input type="text" id="pname" placeholder="Product Name"><br>
+<input type="number" id="pprice" placeholder="Price"><br>
+<input type="text" id="pimage" placeholder="Image URL"><br>
+<button onclick="addProduct()">Add Product</button>
+<button onclick="updateProduct()">Update Product</button>
+</div>
+
+<br>
+
+<div class="box">
+<h3>Delete Product</h3>
+<input type="text" id="deleteName" placeholder="Product Name"><br>
+<button onclick="deleteProduct()">Delete Product</button>
+</div>
+
+<br>
+<button onclick="logout()">Logout</button>
+</div>
+
+<script>
+
+var products = [
+{
+name:"Laptop",
+price:50000,
+image:"https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=200&q=60"
+},
+{
+name:"Watch",
+price:3000,
+image:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400"
+},
+{
+name:"Water Bottle",
+price:500,
+image:"https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=200&q=60"
+},
+{
+name:"Study Chair",
+price:6000,
+image:"https://images.unsplash.com/photo-1598300056393-4aac492f4344?auto=format&fit=crop&w=200&q=60"
+},
+{
+name:"Rice Bag",
+price:2000,
+image:"https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400"
+},
+{
+name:"Mobile",
+price:20000,
+image:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=200&q=60"
+}
+];
+
+var cartItems = [];
+
+function openPage(id){
+var pages=document.getElementsByClassName("page");
+for(var i=0;i<pages.length;i++){
+pages[i].classList.remove("active");
+}
+document.getElementById(id).classList.add("active");
+
+if(id==="catalog"){
+displayProducts();
+}
+}
+
+function displayProducts(){
+var container=document.getElementById("productContainer");
+container.innerHTML="";
+
+for(var i=0;i<products.length;i++){
+container.innerHTML+=`
+<div class="product">
+<img src="${products[i].image}">
+<h3>${products[i].name}</h3>
+<p>Cost: ₹${products[i].price}</p>
+<button onclick="addToCart('${products[i].name}',${products[i].price})">
+Add to Cart</button>
+</div>`;
+}
+}
+
+function addProduct(){
+var name=document.getElementById("pname").value;
+var price=parseInt(document.getElementById("pprice").value);
+var image=document.getElementById("pimage").value;
+
+if(name && price && image){
+products.push({name:name,price:price,image:image});
+alert("Product Added Successfully");
+displayProducts();
+}else{
+alert("Please fill all fields");
+}
+}
+
+function updateProduct(){
+var name=document.getElementById("pname").value;
+var price=parseInt(document.getElementById("pprice").value);
+var image=document.getElementById("pimage").value;
+
+for(var i=0;i<products.length;i++){
+if(products[i].name===name){
+products[i].price=price;
+products[i].image=image;
+alert("Product Updated Successfully");
+displayProducts();
+return;
+}
+}
+alert("Product Not Found");
+}
+
+function deleteProduct(){
+var name=document.getElementById("deleteName").value;
+
+for(var i=0;i<products.length;i++){
+if(products[i].name===name){
+products.splice(i,1);
+alert("Product Deleted Successfully");
+displayProducts();
+return;
+}
+}
+alert("Product Not Found");
+}
+
+/* ✅ NEW CART SYSTEM WITH REMOVE BUTTON */
+
+function addToCart(product,price){
+cartItems.push({name:product, price:price});
+updateCart();
+}
+
+function updateCart(){
+var list=document.getElementById("cartList");
+list.innerHTML="";
+var totalCost = 0;
+
+for(var i=0;i<cartItems.length;i++){
+
+totalCost += cartItems[i].price;
+
+var li=document.createElement("li");
+li.innerHTML = cartItems[i].name + " - ₹" + cartItems[i].price +
+" <button onclick='removeFromCart("+i+")'>Remove</button>";
+
+list.appendChild(li);
+}
+
+document.getElementById("total").innerHTML="Total Cost: ₹"+totalCost;
+}
+
+function removeFromCart(index){
+cartItems.splice(index,1);
+updateCart();
+}
+
+function login(){
+var user=document.getElementById("username").value;
+var pass=document.getElementById("password").value;
+
+if(user==="AKASH" && pass==="2004"){
+openPage("mainModule");
+}else{
+document.getElementById("error").innerHTML="Invalid Username or Password!";
+}
+}
+
+function logout(){
+openPage("home");
+}
+
+displayProducts();
+
+</script>
+</body>
+</html>

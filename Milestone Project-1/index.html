@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1> Relational Inventory Control & Stock Tracking System</h1>
+
+<div class="container">
+    <h2>Add Product</h2>
+    <input type="text" id="product_id" placeholder="Product ID">
+    <input type="text" id="name" placeholder="Product Name">
+    <input type="text" id="category" placeholder="Category">
+    <input type="number" id="price" placeholder="Price">
+    <input type="number" id="quantity" placeholder="Quantity">
+    <button onclick="addProduct()">Add</button>
+</div>
+
+<h2>Product List</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Quantity</th>
+        </tr>
+    </thead>
+    <tbody id="productTable"></tbody>
+</table>
+
+<script src="script.js"></script>
+</body>
+</html>
